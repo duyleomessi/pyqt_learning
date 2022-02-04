@@ -80,6 +80,23 @@ class PyCalcUi(QMainWindow):
     def clearDisplay(self):
         self.setDisplayText('')
 
+class PyCalcCtr:
+    def __init__(self, view):
+        self._view = view
+        # connect signals and slots
+        self._connectSignals()
+
+    def _buildExpression(self, sub_exp):
+        expression = self._view.displayText() + sub_exp
+        self._view.setDisplayText(expression)
+
+    def _connectSignals(self):
+        """ Connect Signals and slots """
+        for btnText, btn in self._view.buttons.items():
+            btn.clicked.connect(partial(self._buildExpression, btnText))
+
+        self._view.buttons['C'].clicked.connect(self._view.clearDisplay)
+
 # Client Code
 def main():
     # Create an instance of QApplication
@@ -88,6 +105,7 @@ def main():
     view = PyCalcUi()
     view.show()
     # Create the instance of the model and controller
+    PyCalcCtr(view)
     # execute the calculator's main loop
     sys.exit(pycalc.exec_())
 
